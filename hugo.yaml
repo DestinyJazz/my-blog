@@ -1,0 +1,4 @@
+baseURL: 'https://destinyjazz.github.io/my-blog/' # 替换为你的实际网址
+languageCode: 'en-us'
+title: 'My DJ Blog'
+theme: 'ananke' # 稍后会添加这个主题
