@@ -1,33 +1,31 @@
-name: Deploy to GitHub Pages
+name: Deploy Hugo Blog to GitHub Pages
 
 on:
   push:
     branches:
-      - main # 当代码推送到 main 分支时触发
+      - main
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest # 在最新的 Ubuntu 虚拟机上运行
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3 # 检出仓库代码到虚拟机
-
-      - name: Setup Node.js (Optional, if you have a static site generator)
-        uses: actions/setup-node@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          node-version: '18'
+          submodules: true  # 如果主题是子模块，需要加上这行
 
-      - name: Build website (Optional, if you use a build tool like Hugo, Jekyll, etc.)
-        run: |
-          echo "Building static content..."
-          # 这里可以运行你的构建命令，例如：
-          # npm install
-          # npm run build
-
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v3 # 使用一个强大的第三方 Actions 来部署
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub 提供的自动令牌
-          publish_dir: ./ # 指定要发布的目录，这里是根目录
-          publish_branch: gh-pages # 指定部署到 gh-pages 分支
+          hugo-version: 'latest'
+          extended: true
+
+      - name: Build Hugo site
+        run: hugo --minify
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public  # Hugo 默认的输出目录
+          publish_branch: gh-pages
