@@ -1,36 +1,50 @@
+# Workflow Name
 name: Deploy Hugo Blog to GitHub Pages
 
+# Trigger the workflow on every push to the main branch
 on:
   push:
     branches:
       - main
 
+# Define the jobs to run
 jobs:
   build-and-deploy:
+    # Run the job on the latest Ubuntu runner
     runs-on: ubuntu-latest
+    
+    # Define the steps for the job
     steps:
+      # Step 1: Checkout the repository code
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step 2: Set up the Hugo environment
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: 'latest'
           extended: true
 
-      # 步骤1：自动下载主题
+      # Step 3: Automatically download the Hugo theme
+      # This is the crucial step to get the theme files
       - name: Clone Hugo theme
         run: |
           mkdir -p themes
+          # Use git clone to get the ananke theme, ensuring it's not a submodule
           git clone https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke
-        # 如果你的主题不是ananke，请修改上面的git clone地址
-
+      
+      # Step 4: Build the Hugo site
       - name: Build Hugo site
         run: hugo --minify
 
+      # Step 5: Deploy the built site to the gh-pages branch
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
+          # Use the default GitHub token for authentication
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # The directory containing the built files (Hugo's default output)
           publish_dir: ./public
+          # The branch to deploy to
           publish_branch: gh-pages
