@@ -1,0 +1,36 @@
+name: Deploy Hugo Blog to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      # 步骤1：自动下载主题
+      - name: Clone Hugo theme
+        run: |
+          mkdir -p themes
+          git clone https://github.com/victoriadrake/hugo-theme-introduction
+        # 如果你的主题不是ananke，请修改上面的git clone地址
+
+      - name: Build Hugo site
+        run: hugo --minify
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
