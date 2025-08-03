@@ -22,7 +22,7 @@ jobs:
       - name: Clone Hugo theme
         run: |
           mkdir -p themes
-          git clone https://github.com/victoriadrake/hugo-theme-introduction
+          git clone git clone https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke
         # 如果你的主题不是ananke，请修改上面的git clone地址
 
       - name: Build Hugo site
